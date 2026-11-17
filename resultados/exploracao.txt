@@ -1,0 +1,1 @@
+O avaliacoes.csv tem 260 registros, 3 colunas. Possui duas classes: positivo e negativo. Com 130 registros de cada classe.
