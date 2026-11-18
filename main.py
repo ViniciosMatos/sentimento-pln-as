@@ -1,9 +1,8 @@
 import re
 import pandas as pd
-
-
-
-
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("data/Avaliacoes.csv")
 
@@ -55,8 +54,57 @@ def preprocessar(texto, remover_stopwords=False):
 
     return " ".join(palavras)
 
-teste = "teste para trabalho GRêMIO GREMIO, não gosto de cholorado"
-print("\nETAPA 2")
-print("Original:", teste)
-print("Completo minusculo:", preprocessar(teste))
-print("Sem stopwords:", preprocessar(teste, remover_stopwords=True))
+# teste = "teste para trabalho GRêMIO GREMIO, não gosto de cholorado"
+# print("\nETAPA 2")
+# print("Original:", teste)
+# print("Completo minusculo:", preprocessar(teste))
+# print("Sem stopwords:", preprocessar(teste, remover_stopwords=True))
+
+# ETAPA 3
+
+# limpando os textos
+limpos = [preprocessar(texto) for texto in df["texto"]]
+
+# treinando o modelo
+X_treino, X_teste, y_treino, y_teste = train_test_split(
+    limpos,
+    df["sentimento"],
+    test_size=0.25,
+    stratify=df["sentimento"],
+    random_state=42,
+)
+
+configs = [
+    ("A", "mantidas", CountVectorizer),
+    ("B", "mantidas", TfidfVectorizer),
+    ("C", "removidas", CountVectorizer),
+    ("D", "removidas", TfidfVectorizer),
+]
+
+print("\nETAPA 3")
+
+for config, stopwords_config, Vetorizador in configs:
+    remover_stopwords = stopwords_config == "removidas"
+
+    limpos_treino = [
+        preprocessar(texto, remover_stopwords)
+        for texto in X_treino
+    ]
+    limpos_teste = [
+        preprocessar(texto, remover_stopwords)
+        for texto in X_teste
+    ]
+
+    vetorizador = Vetorizador()
+    X_treino_vetorizado = vetorizador.fit_transform(limpos_treino)
+    X_teste_vetorizado = vetorizador.transform(limpos_teste)
+
+    vocabulario = vetorizador.get_feature_names_out()
+
+    modelo = LogisticRegression(max_iter=1000, random_state=42)
+    modelo.fit(X_treino_vetorizado, y_treino)
+
+    print(
+        f"{config}: stopwords {stopwords_config} vocabulário={len(vocabulario)}"
+    )
+    print(list(vocabulario))
