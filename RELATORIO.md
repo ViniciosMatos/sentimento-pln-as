@@ -30,7 +30,7 @@ Mostre a matriz de confusão e interprete precisão, recall e F1 de cada classe.
 4. Validação cruzada vs. divisão única
 Por que a validação cruzada é mais confiável do que um único conjunto de teste para comparar configurações? Por que a escolha não pode ser feita olhando o teste? O que seria vazamento de dados neste trabalho e como você o evitou?
 
-(sua resposta)
+Porque a validação cruzada testa o modelo de maneiras diferentes, ao contrario da divisão única. Aqui, ele está repetindo o treinamento varias vezes, repartindo os dados destinados para treino, e testando, fazendo com que ele consiga se desenvolver em diferentes cenários.
 
 5. Análise de erros e palavras influentes
 Escolha 3 textos de erros.csv e explique por que o modelo pode ter errado. Observe as 10 palavras mais influentes de cada classe: há alguma que não carrega sentimento por si só (ex.: palavra funcional ou de domínio)? O que isso diz sobre o que o modelo realmente aprendeu?
